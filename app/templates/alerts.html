@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+<div class="admin-dashboard">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul>
+        {% for category, message in messages %}
+        <li class="{{ category }}">
+            {{ message }}
+            <button class="close" onclick="this.parentElement.style.display='none';">&times;</button>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    <!-- Top Navigation Bar -->
+    <div class="top-nav">
+        <div class="logo">
+            <h2> {{user['organization_name']}}</h2>
+            <h5>Welcome to the Dashboard, {{ user['name'] }}!</h5>
+        </div>
+        <nav class="nav-menu">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('cameras') }}">Cameras</a>
+            <a href="{{ url_for('alerts') }}">Alerts</a>
+            <a href="{{ url_for('auth.logout') }}">Logout</a>
+        </nav>
+    </div>
+
+    <!-- Sidebar + Main Content -->
+    <div class="main-container">
+        <!-- Main content -->
+        <main class="main-content">
+            <h2>Alerts Overview</h2>
+            <p>Here you can manage your Alert.</p>
+        </main>
+    </div>
+</div>
+</script>
+
+
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex" style="height: 80vh; justify-content: space-around;" onload="setLogoutFlag()">
+    <div class="row" style="
+    width: 80%;
+">
+        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center text-white">
+            <img src="{{ url_for('static', filename='img/sAI_with_description.png') }}" alt="logo"
+                class="img-fluid mb-4" style="max-height: 60%; object-fit: cover;">
+            <p>This is the homepage. Explore our features and get started today!</p>
+        </div>
+        <div class="col-md-6 d-flex flex-column justify-content-center align-items-center text-center">
+
+            <ul>
+                <a href="{{ url_for('auth.login') }}" class="mb-3">
+                    <li class="hover_btn"><span>Login</span></li>
+                </a>
+                <a href="{{ url_for('auth.create_account') }}">
+                    <li class="hover_btn"><span>Create Account</span></li>
+                </a>
+            </ul>
+
+        </div>
+    </div>
+</div>
+<script>
+    // Function to warn users when they try to go back after logging out
+    window.onload = function () {
+        if (sessionStorage.getItem('isLoggedOut')) {
+            alert("Please log in first.");
+            sessionStorage.removeItem('isLoggedOut'); // Clear the flag after showing the alert
+        }
+    };
+
+    // Set the flag when the user logs out
+    function setLogoutFlag() {
+        sessionStorage.setItem('isLoggedOut', 'true');
+    }
+</script>
+
+
+
+
+{% endblock %}

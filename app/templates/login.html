@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}SurveilAI Login{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-align-c">SurveilAI Login</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul>
+        {% for category, message in messages %}
+        <li class="{{ category }}">
+            {{ message }}
+            <button class="close" onclick="this.parentElement.style.display='none';">&times;</button>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+    <form id="login-form" action="{{ url_for('auth.login') }}" method="POST">
+        <label for="email">Email</label>
+        <input type="text" id="username" name="email" required><br>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required><br>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <div class="d-flex justify-content-center align-items-center">
+        <p class="home-link text-align-c"><a href="{{url_for('index')}}" style="text-decoration: none; ">Home </a></p>
+        <p> | </p>
+        <p class="home-link text-align-c"><a href="{{url_for('auth.create_account')}}" style="text-decoration: none;">
+                Create
+                Account </a>
+        </p>
+    </div>
+
+</div>
+
+{% endblock %}

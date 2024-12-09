@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}
+SurveilAI Registration
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/registration.css') }}">
+
+<div class="container">
+    <div class="left">
+        <img src="{{ url_for('static',filename='img/registration.jpg')}}" alt="img">
+    </div>
+    <div class="right">
+        <h2 class="text-align-c">SurveilAI Registration</h2>
+        <form id="registration-form" action="{{url_for('make_payment')}}" method="POST">
+            <!-- Adjust action as needed -->
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <small id="email-error" class="error-message"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="organization">Organization Name:</label>
+                <input type="text" id="organization" name="organization" required>
+                <small id="email-error" class="error-message"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <small id="email-error" class="error-message"></small>
+                <button type="button" id="send-otp-btn" onclick="sendOTP()">Send OTP</button>
+            </div>
+
+            <div class="form-group">
+                <label for="otp" id="otp-label" style="display:none;">OTP:</label>
+                <input type="text" id="otp" name="otp" required placeholder="Enter OTP" style="display:none;">
+                <small id="email-error" class="error-message"></small>
+                <button type="button" id="verify-otp-btn" onclick="verifyOTP()" style="display:none;">Verify
+                    OTP</button>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number:</label>
+                <input type="text" id="phone" name="phone" required>
+                <small id="email-error" class="error-message"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <small id="email-error" class="error-message"></small>
+            </div>
+
+
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password:</label>
+                <input type="password" id="confirm-password" name="confirm_password" required>
+                <small id="email-error" class="error-message"></small>
+            </div>
+
+            <div class="form-group option">
+                <label for="camera-plan">Select Camera Plan:</label>
+                <select id="camera-plan" name="camera_plan" required onchange="updatePrice()">
+                    <option value="1">1 Camera - ₹1,245/month</option>
+                    <option value="2">2 Cameras - ₹2,075/month</option>
+                    <option value="3">3 Cameras - ₹2,905/month</option>
+                    <option value="4">4 Cameras - ₹3,735/month</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="text-align: center; margin-top: 20px;">
+                <label for="price" style="font-size: 18px; font-weight: bold; color: #333;">Price:</label>
+                <p id="price"
+                    style="font-size: 24px; font-weight: bold; color: #ff5722; background-color: #f9f9f9; padding: 10px 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); display: inline-block; margin-top: 10px;">
+                    ₹1,245/month
+                </p>
+            </div>
+            <input type="submit" value="Register" class="btn btn-primary" id="register-btn">
+        </form>
+    </div>
+
+
+
+</div>
+<div class="d-flex justify-content-center align-items-center">
+    <p class="home-link text-align-c"><a href="{{url_for('index')}}" style="text-decoration: none; ">Home </a></p>
+    <p> | </p>
+    <p class="home-link text-align-c"><a href="{{url_for('auth.login')}}" style="text-decoration: none;">
+            Login </a>
+    </p>
+</div>
+
+<script src="{{ url_for('static', filename='js/registration.js') }}"></script>
+
+{% endblock %}

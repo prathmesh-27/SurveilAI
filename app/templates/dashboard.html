@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+<div class="admin-dashboard">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul>
+        {% for category, message in messages %}
+        <li class="{{ category }}">
+            {{ message }}
+            <button class="close" onclick="this.parentElement.style.display='none';">&times;</button>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    <!-- Top Navigation Bar -->
+    <div class="top-nav">
+        <div class="logo">
+            <h2> {{user['organization_name']}}</h2>
+            <h5>Welcome to the Dashboard, {{ user['name'] }}!</h5>
+        </div>
+        <nav class="nav-menu">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('cameras') }}">Cameras</a>
+            <a href="{{ url_for('alerts') }}">Alerts</a>
+            <a href="{{ url_for('auth.logout') }}">Logout</a>
+        </nav>
+    </div>
+
+    <!-- Sidebar + Main Content -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="admin-info">
+                <h5 class="text-color-2">Quick Information</h5>
+                <p>Total Cameras: {{user['camera']}}</p>
+                <p>Total Crimes Detected: 5</p>
+            </div>
+            <hr class="separator" />
+            <!-- Camera List -->
+            <div class="camera-list">
+                <h5 class="text-color-2">Camera List</h5>
+                <div class="camera-thumbnails d-flex flex-column flex-wrap">
+                    {% for camera in range(user.camera) %}
+                    <div class="camera-info">
+                        <p>{{ camera.name }}1</p>
+                        <span class="camera-status {{ camera.status }}">{{ camera.status | capitalize }} status</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <hr class="separator" />
+
+            <!-- Alerts and History -->
+            <div class="alerts-list">
+                <h5 class="text-color-2">Alerts</h5>
+                <ul>
+                    {% for alert in range(3) %}
+                    <li>{{ alert.activity }} Detected on cam 1</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <hr class="separator" />
+            <div class="crime-history">
+                <h5 class="text-color-2">Crime Detection History</h5>
+                <ul>
+                    <li>Camera 2 - Theft (Oct 1, 2024)</li>
+                    <li>Camera 4 - Vandalism (Sep 27, 2024)</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main-content">
+            <h2>Dashboard Overview</h2>
+            <p>This is your admin dashboard. You cannot create or modify user credentials.</p>
+        </main>
+    </div>
+</div>
+
+{% endblock %}

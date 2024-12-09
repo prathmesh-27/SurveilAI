@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">-->
+    <!-- <meta http-equiv="Pragma" content="no-cache"> -->
+    <!-- <meta http-equiv="Expires" content="0"> Proxies -->
+
+    <title>{% block title %}SurveilAI{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/logo.ico') }}">
+</head>
+
+<body>
+    <header>
+        <img src="{{ url_for('static',filename='img/logo.png')}}" alt="logo">
+        <img src="{{ url_for('static',filename='img/surveilAI.png')}}" alt="surveilAI">
+
+    </header>
+
+    <main>
+        <!-- Content block where page-specific content will be injected -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-body-tertiary text-center text-lg-start">
+        <!-- Copyright -->
+        <div class="text-center p-3">
+            <p>&copy; 2024 SurveilAI. All Rights Reserved.
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- <script>
+        window.onpopstate = function (event) {
+            window.location.reload(); // Reload the page
+        };
+    </script> -->
+
+</body>
+
+
+</html>

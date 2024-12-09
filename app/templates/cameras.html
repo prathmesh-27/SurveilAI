@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}Cameras{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/camera.css') }}">
+
+<div class="admin-dashboard">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul>
+        {% for category, message in messages %}
+        <li class="{{ category }}">
+            {{ message }}
+            <button class="close" onclick="this.parentElement.style.display='none';">&times;</button>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    <!-- Top Navigation Bar -->
+    <div class="top-nav">
+        <div class="logo">
+            <h2> {{user['organization_name']}}</h2>
+            <h5>Welcome to the Dashboard, {{ user['name'] }}!</h5>
+        </div>
+        <nav class="nav-menu">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('cameras') }}">Cameras</a>
+            <a href="{{ url_for('alerts') }}">Alerts</a>
+            <a href="{{ url_for('auth.logout') }}">Logout</a>
+        </nav>
+    </div>
+
+    <!-- Sidebar + Main Content -->
+    <div class="main-container">
+
+        <main class="main-content">
+            <div class="camera-grid">
+                {% for i in range(user['camera']) %}
+                <div class="camera-section" id="camera-section-{{i}}">
+                    <div class="video" id="video-{{ i }}">
+                        <!-- <div class="port-overlay">
+                            Port: <span id="displayPort">None</span>
+                        </div> -->
+                        <img id="webcam-video-{{i}}" src="{{url_for('static',filename='img/camera_off.png')}}"
+                            alt="Webcam Feed" width="500" height="500">
+
+                    </div> <!-- Placeholder for camera feed -->
+                    <div id="camera-list-{{ i }}" class="camera-list">
+                        <p>Camera Section {{ i }}</p>
+                        <!-- Adding section number dynamically to each button's URL -->
+                        <a href="{{ url_for('add_camera', section=i) }}"><button class="add">Add</button></a>
+                        <button class="on" onclick="startWebcam('{{ i }}')">On</button>
+                        <button class="off" onclick="stopWebcam('{{ i }}')">Off</button>
+                        <button class="delete" onclick="deleteCamera('{{ i }}')">Delete</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+
+    </div>
+
+
+</div>
+<script>
+    function startWebcam(section) {
+        let ip = null;
+        let port = 0;
+
+        if (section != 0) {
+            // Prompt user for IP and port
+            ip = prompt("Enter the IP address (e.g., 192.168.1.1):");
+            port = prompt("Enter the port number (e.g., 8080):");
+
+            // Validate IP and port
+            const ipRegex = /^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$/;
+            if (!ipRegex.test(ip) || !port || isNaN(port)) {
+                alert("Invalid IP address or port number. Please try again.");
+                return;
+            }
+        }
+
+        // Send the IP and port along with the section to the server
+        const loadingMessage = "Starting webcam... Please wait.";
+        alert(loadingMessage);
+
+        fetch(`/start_camera/${section}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ ip, port })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server responded with status ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    // document.getElementById("displayPort").textContent = `${port}`;
+                    document.getElementById(`webcam-video-${section}`).src = `/video_feed/${section}`;
+                } else {
+                    alert(`Error: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error starting camera:', error);
+                alert('An error occurred while starting the camera. Please try again.');
+            });
+    }
+
+
+
+    // Function to stop the webcam feed when the "Off" button is clicked
+    function stopWebcam(section) {
+        let port = null;
+
+        // Prompt for the port if the section is not 0
+        if (section !== 0) {
+            port = prompt("Enter the port number:");
+            if (!port) {
+                alert("Port number is required to stop the webcam.");
+                return;
+            }
+        }
+
+        // Send the section and port to the server
+        fetch(`/stop_webcam/${section}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ port: port }) // Include the port in the request body
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.status === 'success') {
+                    // Reset the webcam video source to 'camera_off' image
+                    document.getElementById(`webcam-video-${section}`).src = "{{url_for('static',filename='img/camera_off.png')}}";
+                    document.getElementById("displayPort").textContent = `None`;
+                }
+            })
+            .catch(error => console.error('Error stopping camera:', error));
+    }
+
+</script>
+<script>
+
+
+    function deleteCamera(cameraId) {
+        fetch(`/delete_camera/${cameraId}`, {
+            method: 'DELETE',
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert('Camera deleted successfully!');
+                location.reload(); // Reload to get the updated camera list
+            })
+            .catch(error => console.error('Error deleting camera:', error));
+    }
+
+    function addCamera(event) {
+        event.preventDefault();
+        // Create the URL with section as a query parameter
+        const url = `/add_camera?section=${section}`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, ip, port }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert('Camera added successfully!');
+                location.reload();
+            })
+            .catch(error => console.error('Error adding camera:', error));
+    }
+
+
+</script>
+
+
+
+{% endblock %}
